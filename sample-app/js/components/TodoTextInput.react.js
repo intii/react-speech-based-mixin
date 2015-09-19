@@ -10,28 +10,24 @@
 var React = require('react');
 var ReactPropTypes = React.PropTypes;
 
-var WitMixin = require('./WitMixin.react.js');
+var speechBasedMixin = require('../../../src/react-speech-based-mixin.js');
 
 var ENTER_KEY_CODE = 13;
 
 var TodoTextInput = React.createClass({
 
-  mixins: [WitMixin],
+  mixins: [speechBasedMixin],
+
+  intentActionMap: {
+    'Reminder': '_addVoiceTodo'
+  },
+
   propTypes: {
     className: ReactPropTypes.string,
     id: ReactPropTypes.string,
     placeholder: ReactPropTypes.string,
     onSave: ReactPropTypes.func.isRequired,
     value: ReactPropTypes.string
-  },
-
-  componentWillMount: function() {
-    console.log('Mounting');
-    this.listenForIntent('hello');
-  },
-
-  processIntent: function(data) {
-    console.log('HERE');
   },
 
   getInitialState: function() {
@@ -85,6 +81,10 @@ var TodoTextInput = React.createClass({
     if (event.keyCode === ENTER_KEY_CODE) {
       this._save();
     }
+  },
+
+  _addVoiceTodo: function(message, data) {
+    this.props.onSave(data[0].entities.reminder[0].value);
   }
 
 });

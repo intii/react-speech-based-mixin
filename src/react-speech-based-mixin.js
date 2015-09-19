@@ -1,17 +1,42 @@
-var voiceCommandDispatcher = require('./vendor/voice-command-dispatcher/dist/vcd.js');
+var voiceCommandDispatcher = require('./vendor/voice-command-dispatcher/src/voice-command-dispatcher');
+var witService = require('./vendor/voice-command-dispatcher/src/modules/service-layer/wit-xhr-service-layer');
+var VCD = new voiceCommandDispatcher(witService);
+VCD.start();
+/**
+ * Adds or removes the component from the intent registry
+ * @param  {String} method To register or unregister the component
+ */
+function _toggleComponentListening(method) {
+  var intent;
+  var actionName;
+  for (intent in this.intentActionMap) {
+    actionName = this.intentActionMap[intent];
+    VCD[method](intent, this[actionName]);
+  }
+}
+
 var ReactSpeechBasedMixin = {
-    listenForIntent: function(intent) {
-        //Listens for the specific intent from the WitDispatcher.
-        // WitDispatcher.subscribe(intent, this.processIntent);
-        this.processIntent();
-    },
 
-    processIntent: function(data) {
-        //Process the intent, this method has to be redefined by the component
-    },
+    /**
+     * This is a map between a type of intent, and the corresponding action associated
+     * to it. Each extended component should overwrite this mapping.
+     * @type {Object}
+     */
+    // intentActionMap: {},
 
+    /**
+     * At the moment of the creation of the component, we register make the component listen for
+     * each defined intent
+     */
     componentWillMount: function() {
-        console.log('MIXIN');
+      _toggleComponentListening.call(this, 'register');
+    },
+
+    /**
+     * At the moment of destroying, we remove the listeners for each defined intent
+     */
+    componentWillUnmount: function() {
+      _toggleComponentListening.call(this, 'unregister');
     }
 };
 

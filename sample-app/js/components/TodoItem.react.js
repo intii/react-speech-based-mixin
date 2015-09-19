@@ -11,24 +11,15 @@ var React = require('react');
 var ReactPropTypes = React.PropTypes;
 var TodoActions = require('../actions/TodoActions');
 var TodoTextInput = require('./TodoTextInput.react');
-var WitMixin = require('./WitMixin.react.js');
+// var WitMixin = require('./WitMixin.react.js');
 
 var classNames = require('classnames');
 
 var TodoItem = React.createClass({
 
-  mixins: [WitMixin],
+  // mixins: [WitMixin],
   propTypes: {
    todo: ReactPropTypes.object.isRequired
-  },
-
-  componentWillMount: function() {
-    console.log('Mounting');
-    this.listenForIntent('hello');
-  },
-
-  processIntent: function(data) {
-    console.log('HERE');
   },
 
   getInitialState: function() {
